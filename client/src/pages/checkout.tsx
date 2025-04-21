@@ -77,30 +77,12 @@ const Checkout = () => {
       return await res.json();
     },
     onSuccess: (data) => {
-      // Create payment intent
-      createPaymentIntent.mutate({ amount: calculateTotalPrice(), bookingId: data.id });
+      // Show checkout form
+      setClientSecret("confirmed");
     },
     onError: (error: Error) => {
       toast({
         title: "Booking Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Create payment intent mutation
-  const createPaymentIntent = useMutation({
-    mutationFn: async (data: { amount: number; bookingId: number }) => {
-      const res = await apiRequest("POST", "/api/create-payment-intent", data);
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      setClientSecret(data.clientSecret);
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Payment Setup Failed",
         description: error.message,
         variant: "destructive",
       });
@@ -131,8 +113,8 @@ const Checkout = () => {
     });
   };
 
-  // Handle payment completion
-  const handlePaymentSuccess = (bookingId: number) => {
+  // Handle booking confirmation
+  const handleBookingConfirmation = (bookingId: number) => {
     navigate(`/booking-confirmation/${bookingId}`);
   };
 
@@ -209,19 +191,14 @@ const Checkout = () => {
                   </div>
                 </div>
                 
-                {/* If we have client secret, show payment form */}
+                {/* If booking is created, show confirmation form */}
                 {clientSecret ? (
                   <div>
-                    <h2 className="text-xl font-semibold mb-4 font-heading">Payment</h2>
-                    <Elements
-                      stripe={stripePromise}
-                      options={{ clientSecret, appearance: { theme: 'stripe' } }}
-                    >
-                      <CheckoutForm
-                        bookingId={createBookingMutation.data?.id}
-                        onPaymentSuccess={handlePaymentSuccess}
-                      />
-                    </Elements>
+                    <h2 className="text-xl font-semibold mb-4 font-heading">Confirm Booking</h2>
+                    <CheckoutForm
+                      bookingId={createBookingMutation.data?.id}
+                      onPaymentSuccess={handleBookingConfirmation}
+                    />
                   </div>
                 ) : (
                   <BookingSummary
@@ -232,7 +209,7 @@ const Checkout = () => {
                     calculateNights={calculateNights}
                     calculateTotalPrice={calculateTotalPrice}
                     onBookNow={handleBooking}
-                    isLoading={createBookingMutation.isPending || createPaymentIntent.isPending}
+                    isLoading={createBookingMutation.isPending}
                   />
                 )}
               </div>
