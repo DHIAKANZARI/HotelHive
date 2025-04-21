@@ -16,7 +16,7 @@ const Checkout = () => {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const roomId = parseInt(params.roomId);
-  const [clientSecret, setClientSecret] = useState("");
+  const [bookingCreated, setBookingCreated] = useState(false);
   const [bookingData, setBookingData] = useState({
     checkInDate: "",
     checkOutDate: "",
@@ -78,7 +78,7 @@ const Checkout = () => {
     },
     onSuccess: (data) => {
       // Show checkout form
-      setClientSecret("confirmed");
+      setBookingCreated(true);
     },
     onError: (error: Error) => {
       toast({
@@ -192,7 +192,7 @@ const Checkout = () => {
                 </div>
                 
                 {/* If booking is created, show confirmation form */}
-                {clientSecret ? (
+                {bookingCreated ? (
                   <div>
                     <h2 className="text-xl font-semibold mb-4 font-heading">Confirm Booking</h2>
                     <CheckoutForm
