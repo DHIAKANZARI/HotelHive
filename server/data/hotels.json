@@ -1,0 +1,248 @@
+[
+  {
+    "name": "Royal Azur Thalasso",
+    "description": "Luxury hotel in Hammamet featuring spacious rooms, a private beach, and a world-class spa and thalassotherapy center. Enjoy fine dining, outdoor pools, and beautiful gardens.",
+    "location": "Beachfront",
+    "city": "Hammamet",
+    "address": "Avenue De La Paix, Hammamet 8050, Tunisia",
+    "rating": 8.9,
+    "stars": 5,
+    "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+    "amenities": ["Private Beach", "Spa", "Pool", "Free WiFi", "Restaurant", "Bar", "Fitness Center", "Room Service"],
+    "reviewCount": 174,
+    "rooms": [
+      {
+        "roomType": "Standard Room",
+        "description": "Comfortable room with garden view, featuring a king-size bed or twin beds.",
+        "price": 120,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar"]
+      },
+      {
+        "roomType": "Deluxe Sea View",
+        "description": "Spacious room with panoramic sea views, featuring a king-size bed and sitting area.",
+        "price": 180,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View"]
+      },
+      {
+        "roomType": "Family Suite",
+        "description": "Large suite with separate living area and two bedrooms, perfect for families.",
+        "price": 260,
+        "capacity": 4,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Multiple Bathrooms"]
+      }
+    ]
+  },
+  {
+    "name": "Djerba Aqua Resort",
+    "description": "A family-friendly beachfront resort with multiple swimming pools, water slides, and a private beach. Perfect for both relaxation and adventure with various dining options and entertainment.",
+    "location": "Beachfront",
+    "city": "Djerba",
+    "address": "Zone Touristique Midoun, Djerba 4116, Tunisia",
+    "rating": 9.2,
+    "stars": 4,
+    "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+    "amenities": ["Private Beach", "Water Park", "Multiple Pools", "Free WiFi", "Restaurant", "Bar", "Kids Club", "Animation Team"],
+    "reviewCount": 138,
+    "rooms": [
+      {
+        "roomType": "Standard Room",
+        "description": "Comfortable room with garden or pool view, featuring a king-size bed or twin beds.",
+        "price": 145,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Refrigerator"]
+      },
+      {
+        "roomType": "Family Room",
+        "description": "Spacious room designed for families with a king-size bed and bunk beds for children.",
+        "price": 190,
+        "capacity": 4,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1586105251261-72a756497a11?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Refrigerator", "Balcony"]
+      },
+      {
+        "roomType": "Deluxe Suite",
+        "description": "Premium suite with separate living area and bedroom, featuring sea views and premium amenities.",
+        "price": 250,
+        "capacity": 3,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1592229505726-ca121723b8ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View", "Premium Toiletries"]
+      }
+    ]
+  },
+  {
+    "name": "Dar El Jeld Hotel & Spa",
+    "description": "A boutique hotel in the heart of Tunis' historic Medina, featuring traditional Tunisian architecture and design. Enjoy authentic cuisine, a rooftop terrace with panoramic views, and a luxurious spa.",
+    "location": "City Center",
+    "city": "Tunis",
+    "address": "Rue Dar El Jeld, Medina, Tunis 1006, Tunisia",
+    "rating": 9.5,
+    "stars": 5,
+    "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+    "amenities": ["Spa", "Free WiFi", "Restaurant", "Bar", "Rooftop Terrace", "Concierge Service", "Room Service"],
+    "reviewCount": 96,
+    "rooms": [
+      {
+        "roomType": "Classic Room",
+        "description": "Elegant room with traditional Tunisian decor, featuring a comfortable queen-size bed.",
+        "price": 210,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Premium Toiletries"]
+      },
+      {
+        "roomType": "Junior Suite",
+        "description": "Spacious suite with separate sitting area and beautiful views of the Medina.",
+        "price": 280,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490359683-658d3d23f972?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Premium Toiletries", "Sitting Area"]
+      },
+      {
+        "roomType": "Royal Suite",
+        "description": "Luxurious suite with separate bedroom, living room, and dining area, featuring traditional craftsmanship and modern amenities.",
+        "price": 380,
+        "capacity": 3,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Premium Toiletries", "Living Room", "Dining Area"]
+      }
+    ]
+  },
+  {
+    "name": "The Sindbad Hotel",
+    "description": "Elegant seaside resort with beautiful Mediterranean architecture, lush gardens, and a pristine private beach. Enjoy multiple dining options, swimming pools, and water sports.",
+    "location": "Beachfront",
+    "city": "Hammamet",
+    "address": "Avenue de la Paix, Hammamet 8050, Tunisia",
+    "rating": 8.7,
+    "stars": 5,
+    "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+    "amenities": ["Private Beach", "Multiple Pools", "Free WiFi", "Restaurant", "Bar", "Spa", "Tennis Courts", "Water Sports"],
+    "reviewCount": 142,
+    "rooms": [
+      {
+        "roomType": "Standard Room",
+        "description": "Comfortable room with garden view, featuring a king-size bed or twin beds.",
+        "price": 140,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar"]
+      },
+      {
+        "roomType": "Sea View Room",
+        "description": "Elegant room with beautiful sea views, featuring a king-size bed or twin beds.",
+        "price": 170,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View"]
+      },
+      {
+        "roomType": "Executive Suite",
+        "description": "Luxurious suite with separate bedroom and living area, featuring panoramic sea views.",
+        "price": 240,
+        "capacity": 3,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490359683-658d3d23f972?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View", "Living Area"]
+      }
+    ]
+  },
+  {
+    "name": "Movenpick Resort & Marine Spa",
+    "description": "Modern luxury resort located on a beautiful private beach in Sousse, featuring contemporary design, extensive gardens, and a world-class marine spa.",
+    "location": "Beachfront",
+    "city": "Sousse",
+    "address": "Boulevard du 14 Janvier, Sousse 4039, Tunisia",
+    "rating": 9.0,
+    "stars": 5,
+    "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+    "amenities": ["Private Beach", "Spa", "Multiple Pools", "Free WiFi", "Restaurant", "Bar", "Fitness Center", "Room Service"],
+    "reviewCount": 188,
+    "rooms": [
+      {
+        "roomType": "Classic Room",
+        "description": "Stylish room with garden or pool view, featuring a king-size bed or twin beds.",
+        "price": 150,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar"]
+      },
+      {
+        "roomType": "Premium Sea View",
+        "description": "Elegant room with breathtaking sea views, featuring a king-size bed and sitting area.",
+        "price": 190,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View"]
+      },
+      {
+        "roomType": "Executive Suite",
+        "description": "Luxurious suite with separate bedroom and living room, featuring panoramic sea views.",
+        "price": 270,
+        "capacity": 3,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490359683-658d3d23f972?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View", "Living Room"]
+      }
+    ]
+  },
+  {
+    "name": "La Badira",
+    "description": "An adults-only luxury resort in Hammamet, featuring elegant minimalist design, panoramic Mediterranean views, and a serene atmosphere perfect for relaxation.",
+    "location": "Beachfront",
+    "city": "Hammamet",
+    "address": "La Badira, Route Touristique, Hammamet 8050, Tunisia",
+    "rating": 9.4,
+    "stars": 5,
+    "imageUrl": "https://images.unsplash.com/photo-1561501900-3701fa6a0864?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+    "amenities": ["Private Beach", "Spa", "Infinity Pool", "Free WiFi", "Restaurant", "Bar", "Fitness Center", "Adults Only"],
+    "reviewCount": 112,
+    "rooms": [
+      {
+        "roomType": "Deluxe Room",
+        "description": "Elegant room with contemporary design, featuring a king-size bed and garden views.",
+        "price": 180,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Premium Toiletries"]
+      },
+      {
+        "roomType": "Premium Sea View",
+        "description": "Luxurious room with breathtaking sea views, featuring a king-size bed and private balcony.",
+        "price": 220,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Balcony", "Sea View", "Premium Toiletries"]
+      },
+      {
+        "roomType": "Signature Suite",
+        "description": "Exclusive suite with separate bedroom and living area, featuring a private terrace with sea views.",
+        "price": 290,
+        "capacity": 2,
+        "available": true,
+        "imageUrl": "https://images.unsplash.com/photo-1590490359683-658d3d23f972?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80",
+        "amenities": ["Air Conditioning", "Flat-screen TV", "Safe", "Minibar", "Terrace", "Sea View", "Living Area", "Premium Toiletries"]
+      }
+    ]
+  }
+]
