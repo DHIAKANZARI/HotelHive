@@ -1,6 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { connectDB } from "./db";
+import { MongoDBStorage } from "./mongo-storage";
+import { storage } from "./storage";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +40,31 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Connect to MongoDB with a 10-second timeout
+  const connectionPromise = connectDB();
+  
+  // Set up a timeout to continue even if MongoDB connection doesn't complete
+  const timeoutPromise = new Promise<void>((resolve) => {
+    setTimeout(() => {
+      console.warn('MongoDB connection taking longer than expected. Continuing startup...');
+      resolve();
+    }, 10000); // 10 seconds timeout
+  });
+  
+  // Wait for either connection to complete or timeout
+  await Promise.race([connectionPromise, timeoutPromise]);
+  
+  // We'll use the storage instance from storage.ts which handles
+  // the fallback to in-memory storage if MongoDB fails
+  try {
+    if (storage instanceof MongoDBStorage) {
+      await storage.loadInitialData();
+    }
+  } catch (error) {
+    console.error('Error initializing data:', error);
+    console.warn('Continuing server startup despite data initialization error');
+  }
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

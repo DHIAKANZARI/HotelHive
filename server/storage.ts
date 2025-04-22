@@ -1,13 +1,14 @@
-import { hotels, users, rooms, bookings, reviews } from "@shared/schema";
-import { type User, type InsertUser, type Hotel, type InsertHotel, type Room, type InsertRoom, type Booking, type InsertBooking, type Review, type InsertReview } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
-import fs from 'fs/promises';
-import path from 'path';
+import type { 
+  User, InsertUser,
+  Hotel, InsertHotel,
+  Room, InsertRoom,
+  Booking, InsertBooking,
+  Review, InsertReview
+} from "@shared/schema";
+import { MongoDBStorage, HotelFilters } from './mongo-storage';
 
-const MemoryStore = createMemoryStore(session);
-
-// Interface for all storage operations
 export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
@@ -35,106 +36,141 @@ export interface IStorage {
   createReview(review: InsertReview): Promise<Review>;
   getReviewsByHotelId(hotelId: number): Promise<Review[]>;
   
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 }
 
-// Hotel filter interface
-export interface HotelFilters {
-  city?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  stars?: number;
-  searchQuery?: string;
-}
-
+// Fallback memory storage implementation
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private hotels: Map<number, Hotel>;
-  private rooms: Map<number, Room>;
-  private bookings: Map<number, Booking>;
-  private reviews: Map<number, Review>;
-  currentUserId: number;
-  currentHotelId: number;
-  currentRoomId: number;
-  currentBookingId: number;
-  currentReviewId: number;
-  sessionStore: session.SessionStore;
+  private users: User[] = [];
+  private hotels: Hotel[] = [];
+  private rooms: Room[] = [];
+  private bookings: Booking[] = [];
+  private reviews: Review[] = [];
+  sessionStore: session.Store;
 
   constructor() {
-    this.users = new Map();
-    this.hotels = new Map();
-    this.rooms = new Map();
-    this.bookings = new Map();
-    this.reviews = new Map();
-    this.currentUserId = 1;
-    this.currentHotelId = 1;
-    this.currentRoomId = 1;
-    this.currentBookingId = 1;
-    this.currentReviewId = 1;
+    const MemoryStore = createMemoryStore(session);
     this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // 24 hours
+      checkPeriod: 86400000, // 24h
     });
-    
-    // Load initial hotel data from JSON file
-    this.loadInitialData();
+    this.initializeSampleData();
   }
 
-  private async loadInitialData() {
-    try {
-      const dataPath = path.join(process.cwd(), 'server', 'data', 'hotels.json');
-      const data = await fs.readFile(dataPath, 'utf-8');
-      const hotelData = JSON.parse(data);
-      
-      for (const hotel of hotelData) {
-        const hotelId = this.currentHotelId++;
-        const newHotel: Hotel = {
-          ...hotel,
-          id: hotelId,
-          amenities: hotel.amenities || [],
-        };
-        this.hotels.set(hotelId, newHotel);
-        
-        // Create rooms for each hotel
-        if (hotel.rooms) {
-          for (const room of hotel.rooms) {
-            const roomId = this.currentRoomId++;
-            const newRoom: Room = {
-              ...room,
-              id: roomId,
-              hotelId,
-              amenities: room.amenities || [],
-            };
-            this.rooms.set(roomId, newRoom);
-          }
-        }
+  private nextId(items: any[]): number {
+    return items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+  }
+
+  private initializeSampleData() {
+    // Sample hotels
+    const hotels: Hotel[] = [
+      {
+        id: 1,
+        name: 'Royal Azur Thalasso',
+        description: 'Luxurious beachfront resort with a spa and multiple pools',
+        location: 'Hammamet',
+        city: 'Hammamet',
+        address: '123 Beach Road, Hammamet',
+        stars: 5,
+        rating: 4.8,
+        imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
+        amenities: ['Spa', 'Pool', 'Restaurant', 'WiFi', 'Beach Access'],
+        reviewCount: 0,
+      },
+      {
+        id: 2,
+        name: 'Movenpick Resort & Marine Spa',
+        description: 'Elegant hotel with excellent service and Mediterranean views',
+        location: 'Sousse',
+        city: 'Sousse',
+        address: '45 Marina Avenue, Sousse',
+        stars: 5,
+        rating: 4.5,
+        imageUrl: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
+        amenities: ['Spa', 'Pool', 'Restaurant', 'WiFi', 'Gym'],
+        reviewCount: 0,
+      },
+      {
+        id: 3,
+        name: 'Diar Lemdina Hotel',
+        description: 'Family-friendly resort with entertainment and water parks',
+        location: 'Yasmine Hammamet',
+        city: 'Yasmine Hammamet',
+        address: '789 Resort Drive, Yasmine Hammamet',
+        stars: 4,
+        rating: 4.2,
+        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
+        amenities: ['Water Park', 'Kid\'s Club', 'Restaurant', 'WiFi', 'Entertainment'],
+        reviewCount: 0,
       }
-    } catch (error) {
-      console.error('Failed to load initial hotel data:', error);
+    ];
+    this.hotels = hotels;
+
+    // Sample rooms
+    const rooms: Room[] = [];
+    for (const hotel of hotels) {
+      rooms.push(
+        {
+          id: rooms.length + 1,
+          hotelId: hotel.id,
+          roomType: 'Standard',
+          description: 'Comfortable room with basic amenities',
+          price: 90,
+          capacity: 2,
+          available: true,
+          imageUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
+          amenities: ['WiFi', 'TV', 'Air Conditioning']
+        },
+        {
+          id: rooms.length + 2,
+          hotelId: hotel.id,
+          roomType: 'Deluxe',
+          description: 'Spacious room with premium amenities and views',
+          price: 150,
+          capacity: 3,
+          available: true,
+          imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
+          amenities: ['WiFi', 'TV', 'Mini Bar', 'Air Conditioning', 'Sea View']
+        },
+        {
+          id: rooms.length + 3,
+          hotelId: hotel.id,
+          roomType: 'Suite',
+          description: 'Luxury suite with separate living area and premium services',
+          price: 250,
+          capacity: 4,
+          available: true,
+          imageUrl: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
+          amenities: ['WiFi', 'TV', 'Mini Bar', 'Air Conditioning', 'Sea View', 'Living Room', 'Butler Service']
+        }
+      );
     }
+    this.rooms = rooms;
   }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    return this.users.find(user => user.id === id);
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    return this.users.find(user => user.username === username);
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email === email,
-    );
+    return this.users.find(user => user.email === email);
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id, isAdmin: false };
-    this.users.set(id, user);
-    return user;
+  async createUser(user: InsertUser): Promise<User> {
+    const newUser: User = {
+      ...user,
+      id: this.nextId(this.users),
+      isAdmin: false,
+      stripeCustomerId: null,
+      fullName: user.fullName || null,
+      phoneNumber: user.phoneNumber || null
+    };
+    this.users.push(newUser);
+    return newUser;
   }
 
   async updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User> {
@@ -143,143 +179,157 @@ export class MemStorage implements IStorage {
       throw new Error('User not found');
     }
     
-    const updatedUser = { ...user, stripeCustomerId };
-    this.users.set(userId, updatedUser);
-    return updatedUser;
+    user.stripeCustomerId = stripeCustomerId;
+    return user;
   }
 
   // Hotel operations
   async getHotels(filters?: HotelFilters): Promise<Hotel[]> {
-    let filteredHotels = Array.from(this.hotels.values());
+    if (!filters) return this.hotels;
     
-    if (filters) {
-      if (filters.city) {
-        filteredHotels = filteredHotels.filter(hotel => 
-          hotel.city.toLowerCase() === filters.city?.toLowerCase());
-      }
+    let filteredHotels = [...this.hotels];
+    
+    if (filters.city) {
+      filteredHotels = filteredHotels.filter(hotel => 
+        hotel.city.toLowerCase().includes(filters.city!.toLowerCase())
+      );
+    }
+    
+    if (filters.minPrice) {
+      // Filter by rooms with price >= minPrice
+      const hotelIdsWithMatchingRooms = this.rooms
+        .filter(room => room.price >= filters.minPrice!)
+        .map(room => room.hotelId);
       
-      if (filters.searchQuery) {
-        const query = filters.searchQuery.toLowerCase();
-        filteredHotels = filteredHotels.filter(hotel => 
-          hotel.name.toLowerCase().includes(query) || 
-          hotel.city.toLowerCase().includes(query) ||
-          hotel.description.toLowerCase().includes(query));
-      }
+      filteredHotels = filteredHotels.filter(hotel => 
+        hotelIdsWithMatchingRooms.includes(hotel.id)
+      );
+    }
+    
+    if (filters.maxPrice) {
+      // Filter by rooms with price <= maxPrice
+      const hotelIdsWithMatchingRooms = this.rooms
+        .filter(room => room.price <= filters.maxPrice!)
+        .map(room => room.hotelId);
       
-      if (filters.stars) {
-        filteredHotels = filteredHotels.filter(hotel => hotel.stars === filters.stars);
-      }
-      
-      if (filters.minPrice || filters.maxPrice) {
-        // This requires additional logic to filter based on room prices
-        // Since rooms are in a separate collection, we need a more complex filtering logic
-        const hotelIds = new Set<number>();
-        
-        Array.from(this.rooms.values()).forEach(room => {
-          if (
-            (!filters.minPrice || room.price >= filters.minPrice) &&
-            (!filters.maxPrice || room.price <= filters.maxPrice)
-          ) {
-            hotelIds.add(room.hotelId);
-          }
-        });
-        
-        filteredHotels = filteredHotels.filter(hotel => hotelIds.has(hotel.id));
-      }
+      filteredHotels = filteredHotels.filter(hotel => 
+        hotelIdsWithMatchingRooms.includes(hotel.id)
+      );
+    }
+    
+    if (filters.stars) {
+      filteredHotels = filteredHotels.filter(hotel => hotel.stars === filters.stars);
+    }
+    
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      filteredHotels = filteredHotels.filter(hotel => 
+        hotel.name.toLowerCase().includes(query) ||
+        hotel.description.toLowerCase().includes(query) ||
+        hotel.location.toLowerCase().includes(query) ||
+        hotel.city.toLowerCase().includes(query)
+      );
     }
     
     return filteredHotels;
   }
 
   async getHotelById(id: number): Promise<Hotel | undefined> {
-    return this.hotels.get(id);
+    return this.hotels.find(hotel => hotel.id === id);
   }
 
   async getHotelsByCity(city: string): Promise<Hotel[]> {
-    return Array.from(this.hotels.values()).filter(
-      (hotel) => hotel.city.toLowerCase() === city.toLowerCase(),
+    return this.hotels.filter(hotel => 
+      hotel.city.toLowerCase().includes(city.toLowerCase())
     );
   }
 
   // Room operations
   async getRoomsByHotelId(hotelId: number): Promise<Room[]> {
-    return Array.from(this.rooms.values()).filter(
-      (room) => room.hotelId === hotelId,
-    );
+    return this.rooms.filter(room => room.hotelId === hotelId);
   }
 
   async getRoomById(id: number): Promise<Room | undefined> {
-    return this.rooms.get(id);
+    return this.rooms.find(room => room.id === id);
   }
 
   // Booking operations
   async createBooking(booking: InsertBooking): Promise<Booking> {
-    const id = this.currentBookingId++;
-    const newBooking: Booking = { 
-      ...booking, 
-      id, 
-      createdAt: new Date() 
+    const newBooking: Booking = {
+      ...booking,
+      id: this.nextId(this.bookings),
+      status: 'pending',
+      paymentStatus: 'pending',
+      createdAt: new Date(),
+      paymentIntentId: null
     };
-    this.bookings.set(id, newBooking);
+    this.bookings.push(newBooking);
     return newBooking;
   }
 
   async getBookingsByUserId(userId: number): Promise<Booking[]> {
-    return Array.from(this.bookings.values()).filter(
-      (booking) => booking.userId === userId,
-    );
+    return this.bookings.filter(booking => booking.userId === userId);
   }
 
   async updateBookingStatus(id: number, status: string): Promise<Booking> {
-    const booking = this.bookings.get(id);
+    const booking = this.bookings.find(b => b.id === id);
     if (!booking) {
       throw new Error('Booking not found');
     }
     
-    const updatedBooking = { ...booking, status };
-    this.bookings.set(id, updatedBooking);
-    return updatedBooking;
+    booking.status = status;
+    return booking;
   }
 
   async updatePaymentStatus(id: number, paymentStatus: string, paymentIntentId?: string): Promise<Booking> {
-    const booking = this.bookings.get(id);
+    const booking = this.bookings.find(b => b.id === id);
     if (!booking) {
       throw new Error('Booking not found');
     }
     
-    const updatedBooking = { 
-      ...booking, 
-      paymentStatus,
-      ...(paymentIntentId && { paymentIntentId }),
-    };
-    this.bookings.set(id, updatedBooking);
-    return updatedBooking;
+    booking.paymentStatus = paymentStatus;
+    if (paymentIntentId) {
+      booking.paymentIntentId = paymentIntentId;
+    }
+    
+    return booking;
   }
 
   // Review operations
   async createReview(review: InsertReview): Promise<Review> {
-    const id = this.currentReviewId++;
-    const newReview: Review = { ...review, id, createdAt: new Date() };
-    this.reviews.set(id, newReview);
+    const newReview: Review = {
+      ...review,
+      id: this.nextId(this.reviews),
+      createdAt: new Date(),
+      comment: review.comment || null
+    };
+    this.reviews.push(newReview);
     
     // Update hotel review count
-    const hotel = await this.getHotelById(review.hotelId);
+    const hotel = this.hotels.find(h => h.id === review.hotelId);
     if (hotel) {
-      const updatedHotel = { 
-        ...hotel, 
-        reviewCount: hotel.reviewCount ? hotel.reviewCount + 1 : 1 
-      };
-      this.hotels.set(hotel.id, updatedHotel);
+      hotel.reviewCount = (hotel.reviewCount || 0) + 1;
     }
     
     return newReview;
   }
 
   async getReviewsByHotelId(hotelId: number): Promise<Review[]> {
-    return Array.from(this.reviews.values()).filter(
-      (review) => review.hotelId === hotelId,
-    );
+    return this.reviews.filter(review => review.hotelId === hotelId);
   }
 }
 
-export const storage = new MemStorage();
+// Create an instance of the storage class
+// If MongoDB connection fails, we'll use the in-memory storage
+let storageInstance: IStorage;
+
+try {
+  storageInstance = new MongoDBStorage();
+  console.log('Using MongoDB storage');
+} catch (error) {
+  console.warn('Failed to initialize MongoDB storage, falling back to in-memory storage');
+  storageInstance = new MemStorage();
+  console.log('Using in-memory storage');
+}
+
+export const storage = storageInstance;
