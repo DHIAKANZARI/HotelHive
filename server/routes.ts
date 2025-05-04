@@ -208,5 +208,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
 
+  // Admin routes
+  app.get("/api/admin/hotels", async (req, res) => {
+    if (!req.isAuthenticated() || !req.user.isAdmin) {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const hotels = await storage.getAllHotels();
+      res.json(hotels);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/approve-hotel/:id", async (req, res) => {
+    if (!req.isAuthenticated() || !req.user.isAdmin) {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    
+    try {
+      const hotelId = parseInt(req.params.id, 10);
+      const hotel = await storage.approveHotel(hotelId);
+      res.json(hotel);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Hotel registration routes
+  app.post("/api/hotels/register", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    try {
+      const hotelData = {
+        ...req.body,
+        ownerId: req.user.id,
+        status: 'pending',
+      };
+      
+      const hotel = await storage.createHotel(hotelData);
+      res.status(201).json(hotel);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Payment processing route
+  app.post("/api/payments/process", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    try {
+      const { bookingId, paymentMethod } = req.body;
+      
+      // Get booking details
+      const booking = await storage.getBookingById(bookingId);
+      if (!booking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+
+      // Process payment (simplified version)
+      const payment = await storage.createPayment({
+        bookingId,
+        userId: req.user.id,
+        amount: booking.totalPrice,
+        method: paymentMethod,
+        status: 'completed'
+      });
+
+      // Update booking status
+      await storage.updateBookingStatus(bookingId, "confirmed");
+      await storage.updatePaymentStatus(bookingId, "paid");
+
+      res.json({ success: true, payment });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   return httpServer;
 }

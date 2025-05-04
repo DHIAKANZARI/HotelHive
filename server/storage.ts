@@ -16,26 +16,31 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User>;
-  
+
   // Hotel operations
   getHotels(filters?: HotelFilters): Promise<Hotel[]>;
   getHotelById(id: number): Promise<Hotel | undefined>;
   getHotelsByCity(city: string): Promise<Hotel[]>;
-  
+  getAllHotels(): Promise<Hotel[]>;
+  approveHotel(hotelId: number): Promise<Hotel>;
+  createHotel(data: any): Promise<Hotel>;
+
   // Room operations
   getRoomsByHotelId(hotelId: number): Promise<Room[]>;
   getRoomById(id: number): Promise<Room | undefined>;
-  
+
   // Booking operations
   createBooking(booking: InsertBooking): Promise<Booking>;
   getBookingsByUserId(userId: number): Promise<Booking[]>;
   updateBookingStatus(id: number, status: string): Promise<Booking>;
   updatePaymentStatus(id: number, paymentStatus: string, paymentIntentId?: string): Promise<Booking>;
-  
+  getBookingById(id: number): Promise<Booking | null>;
+
   // Review operations
   createReview(review: InsertReview): Promise<Review>;
   getReviewsByHotelId(hotelId: number): Promise<Review[]>;
-  
+  createPayment(data: any): Promise<any>;
+
   sessionStore: session.Store;
 }
 
@@ -46,6 +51,7 @@ export class MemStorage implements IStorage {
   private rooms: Room[] = [];
   private bookings: Booking[] = [];
   private reviews: Review[] = [];
+  private payments: any[] = []; // Added payments array
   sessionStore: session.Store;
 
   constructor() {
@@ -75,6 +81,7 @@ export class MemStorage implements IStorage {
         imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
         amenities: ['Spa', 'Pool', 'Restaurant', 'WiFi', 'Beach Access'],
         reviewCount: 0,
+        approved: true //Adding an approved field
       },
       {
         id: 2,
@@ -88,6 +95,7 @@ export class MemStorage implements IStorage {
         imageUrl: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
         amenities: ['Spa', 'Pool', 'Restaurant', 'WiFi', 'Gym'],
         reviewCount: 0,
+        approved: true //Adding an approved field
       },
       {
         id: 3,
@@ -101,6 +109,7 @@ export class MemStorage implements IStorage {
         imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=500&q=80',
         amenities: ['Water Park', 'Kid\'s Club', 'Restaurant', 'WiFi', 'Entertainment'],
         reviewCount: 0,
+        approved: true //Adding an approved field
       }
     ];
     this.hotels = hotels;
@@ -178,49 +187,49 @@ export class MemStorage implements IStorage {
     if (!user) {
       throw new Error('User not found');
     }
-    
+
     user.stripeCustomerId = stripeCustomerId;
     return user;
   }
 
   // Hotel operations
   async getHotels(filters?: HotelFilters): Promise<Hotel[]> {
-    if (!filters) return this.hotels;
-    
-    let filteredHotels = [...this.hotels];
-    
+    if (!filters) return this.hotels.filter(hotel => hotel.approved); // only return approved hotels
+
+    let filteredHotels = [...this.hotels].filter(hotel => hotel.approved); // only return approved hotels
+
     if (filters.city) {
       filteredHotels = filteredHotels.filter(hotel => 
         hotel.city.toLowerCase().includes(filters.city!.toLowerCase())
       );
     }
-    
+
     if (filters.minPrice) {
       // Filter by rooms with price >= minPrice
       const hotelIdsWithMatchingRooms = this.rooms
         .filter(room => room.price >= filters.minPrice!)
         .map(room => room.hotelId);
-      
+
       filteredHotels = filteredHotels.filter(hotel => 
         hotelIdsWithMatchingRooms.includes(hotel.id)
       );
     }
-    
+
     if (filters.maxPrice) {
       // Filter by rooms with price <= maxPrice
       const hotelIdsWithMatchingRooms = this.rooms
         .filter(room => room.price <= filters.maxPrice!)
         .map(room => room.hotelId);
-      
+
       filteredHotels = filteredHotels.filter(hotel => 
         hotelIdsWithMatchingRooms.includes(hotel.id)
       );
     }
-    
+
     if (filters.stars) {
       filteredHotels = filteredHotels.filter(hotel => hotel.stars === filters.stars);
     }
-    
+
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       filteredHotels = filteredHotels.filter(hotel => 
@@ -230,7 +239,7 @@ export class MemStorage implements IStorage {
         hotel.city.toLowerCase().includes(query)
       );
     }
-    
+
     return filteredHotels;
   }
 
@@ -242,6 +251,32 @@ export class MemStorage implements IStorage {
     return this.hotels.filter(hotel => 
       hotel.city.toLowerCase().includes(city.toLowerCase())
     );
+  }
+
+  async getAllHotels(): Promise<Hotel[]> {
+    return this.hotels;
+  }
+
+  async approveHotel(hotelId: number): Promise<Hotel> {
+    const hotel = this.hotels.find(hotel => hotel.id === hotelId);
+    if (!hotel) {
+      throw new Error('Hotel not found');
+    }
+    hotel.approved = true;
+    return hotel;
+  }
+
+  async createHotel(hotelData: any): Promise<Hotel> {
+    const newHotel: Hotel = {
+      ...hotelData,
+      id: this.nextId(this.hotels),
+      approved: false, //Initially not approved
+      reviewCount: 0,
+      rating: 0,
+      imageUrl: hotelData.imageUrl || null,
+    };
+    this.hotels.push(newHotel);
+    return newHotel;
   }
 
   // Room operations
@@ -276,7 +311,7 @@ export class MemStorage implements IStorage {
     if (!booking) {
       throw new Error('Booking not found');
     }
-    
+
     booking.status = status;
     return booking;
   }
@@ -286,13 +321,17 @@ export class MemStorage implements IStorage {
     if (!booking) {
       throw new Error('Booking not found');
     }
-    
+
     booking.paymentStatus = paymentStatus;
     if (paymentIntentId) {
       booking.paymentIntentId = paymentIntentId;
     }
-    
+
     return booking;
+  }
+
+  async getBookingById(id: number): Promise<Booking | null> {
+    return this.bookings.find(booking => booking.id === id) || null;
   }
 
   // Review operations
@@ -304,18 +343,28 @@ export class MemStorage implements IStorage {
       comment: review.comment || null
     };
     this.reviews.push(newReview);
-    
+
     // Update hotel review count
     const hotel = this.hotels.find(h => h.id === review.hotelId);
     if (hotel) {
       hotel.reviewCount = (hotel.reviewCount || 0) + 1;
     }
-    
+
     return newReview;
   }
 
   async getReviewsByHotelId(hotelId: number): Promise<Review[]> {
     return this.reviews.filter(review => review.hotelId === hotelId);
+  }
+
+  async createPayment(paymentData: any): Promise<any> {
+    const newPayment = {
+      ...paymentData,
+      id: this.nextId(this.payments),
+      createdAt: new Date()
+    };
+    this.payments.push(newPayment);
+    return newPayment;
   }
 }
 
