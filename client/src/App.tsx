@@ -2,6 +2,8 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
+
+
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -15,6 +17,7 @@ import BookingConfirmation from "@/pages/booking-confirmation";
 import UserDashboard from "@/pages/user-dashboard";
 import NotFound from "@/pages/not-found";
 
+
 function Router() {
   return (
     <Switch>
@@ -22,6 +25,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/hotels" component={HotelListing} />
       <Route path="/hotels/:id" component={HotelDetails} />
+      
       <ProtectedRoute path="/checkout/:roomId" component={Checkout} />
       <ProtectedRoute path="/booking-confirmation/:bookingId" component={BookingConfirmation} />
       <ProtectedRoute path="/dashboard" component={UserDashboard} />

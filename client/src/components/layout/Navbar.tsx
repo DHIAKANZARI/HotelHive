@@ -37,27 +37,19 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/">
-                <a className="font-heading font-bold text-2xl text-primary">
-                  Hootili
-                </a>
+              <Link href="/" className="font-heading font-bold text-2xl text-primary">
+                Hootili
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link href="/">
-                <a className={`${location === '/' ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}>
-                  Home
-                </a>
+              <Link href="/" className={`${location === '/' ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}>
+                Home
               </Link>
-              <Link href="/hotels">
-                <a className={`${location === '/hotels' ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}>
-                  Hotels
-                </a>
+              <Link href="/hotels" className={`${location === '/hotels' ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}>
+                Hotels
               </Link>
-              <Link href="/hotels?special=offers">
-                <a className={`${location.includes('special=offers') ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}>
-                  Offers
-                </a>
+              <Link href="/hotels?special=offers" className={`${location.includes('special=offers') ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}>
+                Offers
               </Link>
               <a href="#contact" className="border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Contact
@@ -85,12 +77,10 @@ const Navbar = () => {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href="/dashboard">
-                          <a className="flex items-center">
-                            <User className="mr-2 h-4 w-4" />
-                            <span>My Dashboard</span>
-                          </a>
+                      <DropdownMenuItem>
+                        <Link href="/dashboard" className="flex items-center">
+                          <User className="mr-2 h-4 w-4" />
+                          <span>My Dashboard</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -132,20 +122,14 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="sm:hidden">
           <div className="pt-2 pb-3 space-y-1">
-            <Link href="/">
-              <a className={`${location === '/' ? 'bg-primary-light text-primary' : 'hover:bg-neutral-50'} block pl-3 pr-4 py-2 border-l-4 border-primary text-base font-medium`}>
-                Home
-              </a>
+            <Link href="/" className={`${location === '/' ? 'bg-primary-light text-primary' : 'hover:bg-neutral-50'} block pl-3 pr-4 py-2 border-l-4 border-primary text-base font-medium`}>
+              Home
             </Link>
-            <Link href="/hotels">
-              <a className={`${location === '/hotels' ? 'bg-primary-light text-primary' : 'hover:bg-neutral-50'} block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium`}>
-                Hotels
-              </a>
+            <Link href="/hotels" className={`${location === '/hotels' ? 'bg-primary-light text-primary' : 'hover:bg-neutral-50'} block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium`}>
+              Hotels
             </Link>
-            <Link href="/hotels?special=offers">
-              <a className={`${location.includes('special=offers') ? 'bg-primary-light text-primary' : 'hover:bg-neutral-50'} block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium`}>
-                Offers
-              </a>
+            <Link href="/hotels?special=offers" className={`${location.includes('special=offers') ? 'bg-primary-light text-primary' : 'hover:bg-neutral-50'} block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium`}>
+              Offers
             </Link>
             <a href="#contact" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium hover:bg-neutral-50">
               Contact
@@ -172,10 +156,8 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="mt-3 space-y-1">
-                  <Link href="/dashboard">
-                    <a className="block px-4 py-2 text-base font-medium text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100">
-                      My Dashboard
-                    </a>
+                  <Link href="/dashboard" className="block px-4 py-2 text-base font-medium text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100">
+                    My Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -187,10 +169,8 @@ const Navbar = () => {
               </>
             ) : (
               <div className="mt-3 px-2 space-y-1">
-                <Link href="/auth">
-                  <a className="block w-full text-center py-3 px-4 rounded-md shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark">
-                    Sign In
-                  </a>
+                <Link href="/auth" className="block w-full text-center py-3 px-4 rounded-md shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark">
+                  Sign In
                 </Link>
               </div>
             )}

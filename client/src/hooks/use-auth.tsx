@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -40,7 +40,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<User | undefined, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  // Clear user data on 401 errors
+  useEffect(() => {
+    if (error?.message.includes("401")) {
+      queryClient.setQueryData(["/api/user"], null);
+    }
+  }, [error]);
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
@@ -55,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
+      queryClient.setQueryData(["/api/user"], null);
       toast({
         title: "Login failed",
         description: error.message,

@@ -1,61 +1,65 @@
 // User types
 export interface User {
-  id: number;
+  id: string;
+  _id?: string;
   username: string;
   email: string;
-  fullName?: string;
-  phoneNumber?: string;
+  fullName: string | null;
+  phoneNumber: string | null;
   isAdmin: boolean;
-  stripeCustomerId?: string;
+  stripeCustomerId: string | null;
 }
 
 // Hotel types
 export interface Hotel {
-  id: number;
+  id: string;
+  _id?: string;
   name: string;
   description: string;
   location: string;
   city: string;
   address: string;
-  rating?: number;
-  stars?: number;
-  imageUrl?: string;
-  amenities?: string[];
-  reviewCount?: number;
+  rating: number | null;
+  stars: number | null;
+  imageUrl: string | null;
+  amenities: string[] | null;
+  reviewCount: number;
 }
 
 // Room types
 export interface Room {
-  id: number;
-  hotelId: number;
+  id: string;
+  _id?: string;
+  hotelId: string;
   roomType: string;
   description: string;
   price: number;
   capacity: number;
   available: boolean;
-  imageUrl?: string;
-  amenities?: string[];
+  imageUrl: string | null;
+  amenities: string[] | null;
 }
 
 // Booking types
 export interface Booking {
-  id: number;
-  userId: number;
-  roomId: number;
-  hotelId: number;
+  id: string;
+  _id?: string;
+  userId: string;
+  roomId: string;
+  hotelId: string;
   checkInDate: string;
   checkOutDate: string;
   totalPrice: number;
   numberOfGuests: number;
   status: string;
   paymentStatus: string;
-  paymentIntentId?: string;
+  paymentIntentId: string | null;
   createdAt: string;
 }
 
 export interface BookingFormData {
-  roomId: number;
-  hotelId: number;
+  roomId: string;
+  hotelId: string;
   checkInDate: string;
   checkOutDate: string;
   numberOfGuests: number;
@@ -63,11 +67,12 @@ export interface BookingFormData {
 
 // Review types
 export interface Review {
-  id: number;
-  userId: number;
-  hotelId: number;
+  id: string;
+  _id?: string;
+  userId: string;
+  hotelId: string;
   rating: number;
-  comment?: string;
+  comment: string;
   createdAt: string;
 }
 
@@ -92,8 +97,7 @@ export interface Destination {
 
 // Testimonial type for homepage
 export interface Testimonial {
-  id: number;
-  name: string;
+  id: string;
   hotel: string;
   location: string;
   comment: string;

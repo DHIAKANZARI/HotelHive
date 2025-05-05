@@ -4,12 +4,12 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
-interface CheckoutFormProps {
+interface PaymentFormProps {
   bookingId: number;
   onPaymentSuccess: (bookingId: number) => void;
 }
 
-const CheckoutForm = ({ bookingId, onPaymentSuccess }: CheckoutFormProps) => {
+const PaymentForm = ({ bookingId, onPaymentSuccess }: PaymentFormProps) => {
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -109,4 +109,4 @@ const CheckoutForm = ({ bookingId, onPaymentSuccess }: CheckoutFormProps) => {
   );
 };
 
-export default CheckoutForm; 
+export default PaymentForm; 

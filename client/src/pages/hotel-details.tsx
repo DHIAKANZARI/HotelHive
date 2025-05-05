@@ -23,7 +23,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 const HotelDetails = () => {
   const params = useParams<{ id: string }>();
-  const hotelId = parseInt(params.id);
+  const hotelId = params.id;
   const [_, setLocation] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -55,6 +55,7 @@ const HotelDetails = () => {
     isError: isHotelError,
   } = useQuery<Hotel>({
     queryKey: [`/api/hotels/${hotelId}`],
+    queryFn: () => apiRequest("GET", `/api/hotels/${hotelId}`).then(res => res.json()),
     enabled: !!hotelId,
   });
 
@@ -65,6 +66,7 @@ const HotelDetails = () => {
     isError: isRoomsError,
   } = useQuery<Room[]>({
     queryKey: [`/api/hotels/${hotelId}/rooms`],
+    queryFn: () => apiRequest("GET", `/api/hotels/${hotelId}/rooms`).then(res => res.json()),
     enabled: !!hotelId,
   });
 
@@ -75,6 +77,7 @@ const HotelDetails = () => {
     isError: isReviewsError,
   } = useQuery<Review[]>({
     queryKey: [`/api/hotels/${hotelId}/reviews`],
+    queryFn: () => apiRequest("GET", `/api/hotels/${hotelId}/reviews`).then(res => res.json()),
     enabled: !!hotelId,
   });
 
@@ -124,33 +127,23 @@ const HotelDetails = () => {
     }).format(date);
   };
 
-  if (isHotelLoading) {
+  if (isHotelLoading || isRoomsLoading || isReviewsLoading) {
     return (
-      <>
-        <Navbar />
-        <div className="flex justify-center items-center h-screen">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-        <Footer />
-      </>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
   if (isHotelError || !hotel) {
     return (
-      <>
-        <Navbar />
-        <div className="flex flex-col justify-center items-center h-screen">
-          <h2 className="text-2xl font-bold mb-4">Hotel Not Found</h2>
-          <p className="text-neutral-600 mb-6">
-            The hotel you're looking for doesn't exist or has been removed.
-          </p>
-          <Button onClick={() => setLocation("/hotels")}>
-            Browse Other Hotels
-          </Button>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-4">Hotel Not Found</h1>
+          <p className="text-neutral-500 mb-8">The hotel you're looking for doesn't exist or has been removed.</p>
+          <Button onClick={() => setLocation("/hotels")}>Back to Hotels</Button>
         </div>
-        <Footer />
-      </>
+      </div>
     );
   }
 

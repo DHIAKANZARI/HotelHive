@@ -23,18 +23,18 @@ const BookingConfirmation = () => {
 
   // Fetch booking details
   const { data: booking, isLoading: isBookingLoading, isError: isBookingError } = useQuery<Booking>({
-    queryKey: [`/api/bookings/${bookingId}`],
+    queryKey: [`/pages/api/bookings/${bookingId}`],
   });
 
   // Fetch hotel details once we have the booking
   const { data: hotel, isLoading: isHotelLoading } = useQuery<Hotel>({
-    queryKey: [`/api/hotels/${booking?.hotelId}`],
+    queryKey: [`/pages/api/hotels/${booking?.hotelId}`],
     enabled: !!booking?.hotelId,
   });
 
   // Fetch room details once we have the booking
   const { data: room, isLoading: isRoomLoading } = useQuery<Room>({
-    queryKey: [`/api/rooms/${booking?.roomId}`],
+    queryKey: [`/pages/api/rooms/${booking?.roomId}`],
     enabled: !!booking?.roomId,
   });
 

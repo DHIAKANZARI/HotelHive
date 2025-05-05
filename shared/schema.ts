@@ -1,111 +1,107 @@
-import { pgTable, text, serial, integer, boolean, date, timestamp, doublePrecision } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { ObjectId } from "mongodb";
+
+// Convert ObjectId to/from string for Zod
+const objectIdSchema = z.string().transform((str) => new ObjectId(str));
+
+// Base schema for MongoDB documents
+const baseSchema = z.object({
+  _id: objectIdSchema.optional(),
+  id: z.string().optional(),
+});
+
+// Transform function to add id from _id
+const addIdFromObjectId = (data: any) => {
+  if (data._id && !data.id) {
+    return { ...data, id: data._id.toString() };
+  }
+  return data;
+};
 
 // User schema
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").notNull().unique(),
-  fullName: text("full_name"),
-  phoneNumber: text("phone_number"),
-  isAdmin: boolean("is_admin").default(false),
-  stripeCustomerId: text("stripe_customer_id"),
+const rawUserSchema = baseSchema.extend({
+  username: z.string(),
+  password: z.string(),
+  email: z.string().email(),
+  fullName: z.string().nullable(),
+  phoneNumber: z.string().nullable(),
+  isAdmin: z.boolean().default(false),
+  stripeCustomerId: z.string().nullable(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-  email: true,
-  fullName: true,
-  phoneNumber: true,
-});
+export const userSchema = rawUserSchema.transform(addIdFromObjectId);
+export const insertUserSchema = rawUserSchema.omit({ _id: true, id: true });
 
 // Hotel schema
-export const hotels = pgTable("hotels", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  location: text("location").notNull(),
-  city: text("city").notNull(),
-  address: text("address").notNull(),
-  rating: doublePrecision("rating"),
-  stars: integer("stars"),
-  imageUrl: text("image_url"),
-  amenities: text("amenities").array(),
-  reviewCount: integer("review_count").default(0),
+const rawHotelSchema = baseSchema.extend({
+  name: z.string(),
+  description: z.string(),
+  location: z.string(),
+  city: z.string(),
+  address: z.string(),
+  rating: z.number().nullable(),
+  stars: z.number().nullable(),
+  imageUrl: z.string().nullable(),
+  amenities: z.array(z.string()).nullable(),
+  reviewCount: z.number().default(0),
 });
 
-export const insertHotelSchema = createInsertSchema(hotels).omit({
-  id: true,
-});
+export const hotelSchema = rawHotelSchema.transform(addIdFromObjectId);
+export const insertHotelSchema = rawHotelSchema.omit({ _id: true, id: true });
 
 // Room schema
-export const rooms = pgTable("rooms", {
-  id: serial("id").primaryKey(),
-  hotelId: integer("hotel_id").notNull(),
-  roomType: text("room_type").notNull(),
-  description: text("description").notNull(),
-  price: doublePrecision("price").notNull(),
-  capacity: integer("capacity").notNull(),
-  available: boolean("available").default(true),
-  imageUrl: text("image_url"),
-  amenities: text("amenities").array(),
+const rawRoomSchema = baseSchema.extend({
+  hotelId: z.string(),
+  roomType: z.string(),
+  description: z.string(),
+  price: z.number(),
+  capacity: z.number(),
+  available: z.boolean().default(true),
+  imageUrl: z.string().nullable(),
+  amenities: z.array(z.string()).nullable(),
 });
 
-export const insertRoomSchema = createInsertSchema(rooms).omit({
-  id: true,
-});
+export const roomSchema = rawRoomSchema.transform(addIdFromObjectId);
+export const insertRoomSchema = rawRoomSchema.omit({ _id: true, id: true });
 
 // Booking schema
-export const bookings = pgTable("bookings", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  roomId: integer("room_id").notNull(),
-  hotelId: integer("hotel_id").notNull(),
-  checkInDate: date("check_in_date").notNull(),
-  checkOutDate: date("check_out_date").notNull(),
-  totalPrice: doublePrecision("total_price").notNull(),
-  numberOfGuests: integer("number_of_guests").notNull(),
-  status: text("status").notNull(), // confirmed, cancelled, pending
-  paymentStatus: text("payment_status").notNull(), // paid, pending
-  paymentIntentId: text("payment_intent_id"),
-  createdAt: timestamp("created_at").defaultNow(),
+const rawBookingSchema = baseSchema.extend({
+  hotelId: z.string(),
+  userId: z.string(),
+  roomId: z.string(),
+  checkInDate: z.string(),
+  checkOutDate: z.string(),
+  totalPrice: z.number(),
+  numberOfGuests: z.number(),
+  status: z.string(),
+  paymentStatus: z.string(),
+  paymentIntentId: z.string().nullable(),
+  createdAt: z.date().nullable(),
 });
 
-export const insertBookingSchema = createInsertSchema(bookings).omit({
-  id: true,
-  createdAt: true,
-});
+export const bookingSchema = rawBookingSchema.transform(addIdFromObjectId);
+export const insertBookingSchema = rawBookingSchema.omit({ _id: true, id: true, status: true, paymentStatus: true, paymentIntentId: true, createdAt: true });
 
 // Review schema
-export const reviews = pgTable("reviews", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  hotelId: integer("hotel_id").notNull(),
-  rating: integer("rating").notNull(),
-  comment: text("comment"),
-  createdAt: timestamp("created_at").defaultNow(),
+const rawReviewSchema = baseSchema.extend({
+  hotelId: z.string(),
+  userId: z.string(),
+  rating: z.number(),
+  comment: z.string(),
+  createdAt: z.date(),
 });
 
-export const insertReviewSchema = createInsertSchema(reviews).omit({
-  id: true,
-  createdAt: true,
-});
+export const reviewSchema = rawReviewSchema.transform(addIdFromObjectId);
+export const insertReviewSchema = rawReviewSchema.omit({ _id: true, id: true, createdAt: true });
 
-// Type exports
+// Export types
+export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
-
+export type Hotel = z.infer<typeof hotelSchema>;
 export type InsertHotel = z.infer<typeof insertHotelSchema>;
-export type Hotel = typeof hotels.$inferSelect;
-
+export type Room = z.infer<typeof roomSchema>;
 export type InsertRoom = z.infer<typeof insertRoomSchema>;
-export type Room = typeof rooms.$inferSelect;
-
+export type Booking = z.infer<typeof bookingSchema>;
 export type InsertBooking = z.infer<typeof insertBookingSchema>;
-export type Booking = typeof bookings.$inferSelect;
-
+export type Review = z.infer<typeof reviewSchema>;
 export type InsertReview = z.infer<typeof insertReviewSchema>;
-export type Review = typeof reviews.$inferSelect;

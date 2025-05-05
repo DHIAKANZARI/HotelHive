@@ -21,7 +21,7 @@ interface RoomCardProps {
   room: Room;
   checkInDate: string;
   checkOutDate: string;
-  hotelId: number;
+  hotelId: string;
 }
 
 const RoomCard = ({ room, checkInDate, checkOutDate, hotelId }: RoomCardProps) => {

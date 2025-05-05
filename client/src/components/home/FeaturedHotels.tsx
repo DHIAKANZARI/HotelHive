@@ -29,8 +29,8 @@ const FeaturedHotels = () => {
 
         {isLoading ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={`skeleton-${index}`} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full h-48" />
                 <div className="p-4">
                   <Skeleton className="h-6 w-3/4 mb-2" />
@@ -51,7 +51,7 @@ const FeaturedHotels = () => {
         ) : (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {featuredHotels?.map((hotel) => (
-              <HotelCard key={hotel.id} hotel={hotel} />
+              <HotelCard key={`hotel-${hotel.id}`} hotel={hotel} />
             ))}
           </div>
         )}

@@ -46,9 +46,9 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
         </div>
         <div className="flex items-center mt-2">
           <div className="flex text-secondary">
-            {[...Array(5)].map((_, i) => (
+            {Array.from({ length: 5 }).map((_, i) => (
               <Star
-                key={i}
+                key={`${hotel.id}-star-${i}`}
                 className={`h-4 w-4 ${
                   i < (hotel.stars || 0) ? "fill-current" : ""
                 }`}
