@@ -44,8 +44,8 @@ const Checkout = () => {
         setError("Failed to create booking.");
       }
     } catch (err) {
-      console.error(err);
-      setError("Something went wrong while booking.");
+      console.log('heloo');
+      
     } finally {
       setIsCreating(false);
     }

@@ -88,7 +88,8 @@ const RoomCard = ({ room, checkInDate, checkOutDate, hotelId }: RoomCardProps) =
     if (extraOptions.parking) params.append("parking", "true");
     if (extraOptions.wifi) params.append("wifi", "true");
     
-    navigate(`/checkout/${room.id}?${params.toString()}`);
+    navigate(`/fake-payment?${params.toString()}`);
+
   };
 
   // Calculate total price
